@@ -11,20 +11,18 @@
 @demo demo/index.html
 -->
 
-<<dom-module id="skygear-app">
+<dom-module id="skygear-app">
   <style>
     :host {
       display: block;
     }
   </style>
   <template>
-
+    <h6>skygear</h6>
   </template>
 
   <script src="https://code.skygear.io/js/polyfill/latest/polyfill.min.js"></script>
   <script src="https://code.skygear.io/js/skygear/latest/skygear.min.js"></script>
-
-
 
   <script>
     (function() {
@@ -42,11 +40,11 @@
             type: String,
             value: ''
           },
-          currentUser: {
-            type: Object,
-            notify: true,
-          //   computed: '__computeCurrentUser(app)'
-          },
+          // currentUser: {
+          //   type: Object,
+          //   notify: true,
+          // //   computed: '__computeCurrentUser(app)'
+          // },
           apiKey: {
             type: String
           },
@@ -61,6 +59,10 @@
         },
         __computeApp: function(name, endPoint, apiKey){
           if (endPoint && apiKey){
+            skygear.onUserChanged(() => {
+              this.notifyPath('app.currentUser.id');
+            });
+            var ctx = this;
             skygear.config({
                'endPoint': endPoint, // trailing slash is required
                'apiKey': apiKey,
@@ -69,6 +71,7 @@
                 //  this.currentUser = skygear.currentUser;
                   console.log('skygear.currentUser found');
                   console.log('skygear.currentUser: ' + skygear.currentUser.id);
+                  ctx.notifyPath('app.currentUser.id');
                }
                console.log('skygear container is now ready for making API calls.');
              }, function (error) {
@@ -83,7 +86,7 @@
         },
 
       });
-    });
+    })();
   </script>
 
 </dom-module>
