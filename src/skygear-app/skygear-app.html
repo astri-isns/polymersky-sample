@@ -1,0 +1,89 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<!--
+`skygear-element`
+
+
+@demo demo/index.html
+-->
+
+<<dom-module id="skygear-app">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+
+  </template>
+
+  <script src="https://code.skygear.io/js/polyfill/latest/polyfill.min.js"></script>
+  <script src="https://code.skygear.io/js/skygear/latest/skygear.min.js"></script>
+
+
+
+  <script>
+    (function() {
+      'use strict';
+      /**
+       * The element is used for initializing and configuring your
+       * connection. It is permanently initialized once attached and
+       * should not be dynamically bound.
+       */
+      Polymer({
+        is: 'skygear-app',
+        properties: {
+
+          name: {
+            type: String,
+            value: ''
+          },
+          currentUser: {
+            type: Object,
+            notify: true,
+          //   computed: '__computeCurrentUser(app)'
+          },
+          apiKey: {
+            type: String
+          },
+          endPoint:{
+            type: String
+          },
+          app: {
+            type: Object,
+            notify: true,
+            computed: '__computeApp(name, endPoint, apiKey)'
+          }
+        },
+        __computeApp: function(name, endPoint, apiKey){
+          if (endPoint && apiKey){
+            skygear.config({
+               'endPoint': endPoint, // trailing slash is required
+               'apiKey': apiKey,
+             }).then( function(container){
+               if (skygear.currentUser){
+                //  this.currentUser = skygear.currentUser;
+                  console.log('skygear.currentUser found');
+                  console.log('skygear.currentUser: ' + skygear.currentUser.id);
+               }
+               console.log('skygear container is now ready for making API calls.');
+             }, function (error) {
+               console.error(error);
+             });
+
+          }else {
+             return null;
+          }
+
+          return skygear;
+        },
+
+      });
+    });
+  </script>
+
+</dom-module>

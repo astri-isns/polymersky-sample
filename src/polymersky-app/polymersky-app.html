@@ -1,0 +1,146 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="record-test.html">
+<link rel="import" href="../skygear/skygear-app.html">
+
+<dom-module id="polymersky-app">
+  <template >
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <skygear-app name="skygear" app="{{app}}" currentUser="[[user]]" end-point="https://projectmi.skygeario.com/" api-key="7ed2c23f01584f8eabb23e356d8af6b1"></skygear-app>
+
+
+<!-- <selector-course selected="{{skygear.currentUser}}" id="{{currentUser}}"></selector-course> -->
+
+    <h2>Hello [[prop1]]</h2>
+    <h3>Endpoint: [[app.endPoint]]</h3>
+    <h4>Access Token: [[app.accessToken]]</h4>
+    <h4>User Id: [[user.id]]</h4>
+    <!-- <h4>User Id: [[__currentUserId(skygear)]]</h4> -->
+
+    <paper-input always-float-label label="Email" id="email" value="{{email}}"></paper-input>
+    <paper-input always-float-label label="Password" type="password" id="password" value="{{password}}"></paper-input>
+
+    <paper-button raised on-tap="createUser" disabled="[[!online]]">
+      Create User
+    </paper-button>
+
+    <paper-button raised on-tap="passwordSignIn" disabled="[[!online]]">
+      Password Sign In
+    </paper-button>
+
+    <br />
+    <paper-button raised on-tap="whoAmI" disabled="[[!online]]">
+      Who Am I?
+    </paper-button>
+
+    <br />
+    <paper-button raised on-tap="writeDummy" disabled="[[!online]]">
+      Write Dummy Data
+    </paper-button>
+    <paper-button raised on-tap="readDummy" disabled="[[!online]]">
+        Read Dummy Data
+      </paper-button>
+
+
+      <template is="dom-repeat" items="[[records]]" id="records" as="record">
+        <record-test record="[[record]]"></record-test>
+      </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'polymersky-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'polymersky-app',
+        },
+        // record:{
+        //   type: Object,
+        // },
+        records: {
+          type: Array,
+          value: []
+          // notify: true
+        },
+        currentUser: {
+          type: Object,
+          notify: true,
+          // computed: '__computeUser(skygear)'
+        },
+        // accessToken: {
+        //   type: String,
+        //   notify: true,
+        // }
+      },
+      // __computeUser: function(){
+      //   skygear.whoami().then((user)=>{
+      //     return user;
+      //         console.log(`Oh. I am ${user.id}.`);
+      //   }, (err) => {
+      //     alert('error');
+      //   });
+      // },
+      whoAmI: function(){
+          this.app.whoami().then( function(user){
+              console.log(user.id);
+              // this.currentUser = user;
+              return user;
+        }, function(error){
+          alert('error');
+        });
+      },
+      createUser: function(){
+        this.app.signupWithEmail(this.email, this.password);
+      },
+      passwordSignIn: function(){
+        this.app.loginWithEmail(this.email, this.password).then(
+          function(){
+            console.log('login ok');
+            // console.log(skygear.currentUser.id);
+            // currentUserId = skygear.currentUser.id;
+            // accessToken = skygear.accessToken;
+            console.log(skygear.currentUser.id);
+            // this.set('currentUser', skygear.currentUser);
+          }
+        );
+      },
+      readDummy: function(){
+        const Test = skygear.Record.extend('test_test');
+        const Query = new skygear.Query(Test);
+
+        this.app.publicDB.query(Query).then( function(records) {
+
+          // this.record = records[0];
+          this.records = Array.from(records);
+          // this.push('records', Array.from(records)[0]);
+          this.$.records.render();
+          //  console.log(JSON.stringify( Array.from(records)));
+        }, function (error){
+          console.error(error);
+        });
+
+      },
+      writeDummy: function(){
+        var Test = this.app.Record.extend('test_test');
+        return this.app.publicDB.save(new Test({
+          'content': 'Hello World'
+        })).then(function(record){
+        console.log('Record saved');
+      }).catch(function(error){
+        console.error('Error: ' + error.message);
+      });
+    }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,8 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/polymersky-app/polymersky-app.html",
+  "fragments": [
+    "src/polymersky-app/record-test.html",
+    "src/skygear-app/skygear-app.html"
+  ]
+}

@@ -1,0 +1,15 @@
+<html><head></head><body>&lt;<dom-module id="record-test">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+
+    <h4>{{record.content}}</h4>
+        <h5>{{record._id}}</h5>
+  </template>
+
+  <script>Polymer({is:"record-test",properties:{record:{type:Object,notify:!0}},created:function(){}});</script>
+</dom-module>
+</body></html>
