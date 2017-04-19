@@ -42,11 +42,6 @@
             type: String,
             value: ''
           },
-          currentUser: {
-            type: Object,
-            notify: true,
-          //   computed: '__computeCurrentUser(app)'
-          },
           apiKey: {
             type: String
           },
@@ -61,6 +56,9 @@
         },
         __computeApp: function(name, endPoint, apiKey){
           if (endPoint && apiKey){
+            skygear.onUserChanged(() => {
+              this.notifyPath('app.currentUser.id');
+            });
             skygear.config({
                'endPoint': endPoint, // trailing slash is required
                'apiKey': apiKey,
